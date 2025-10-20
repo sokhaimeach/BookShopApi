@@ -15,6 +15,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<BookService>();
 builder.Services.AddSingleton<AuthorService>();
 builder.Services.AddSingleton<UserService>();
+builder.Services.AddSingleton<OrderService>();
 
 var app = builder.Build();
 

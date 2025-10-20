@@ -7,5 +7,6 @@ namespace BookApi.Configuration
         public string BooksCollection { get; set; } = String.Empty;
         public string UsersCollection { get; set; } = String.Empty;
         public string AuthorsCollection { get; set; } = String.Empty;
+        public string OrdersCollection { get; set; } = String.Empty;
     }
 }
