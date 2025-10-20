@@ -27,6 +27,7 @@ public class BookService
     public async Task<string> AddAsync([FromBody] Book book)
     {
         book.PublishDate = DateTime.UtcNow;
+        book.PublishDate.ToString("yyyy-MM-dd HH:mm:ss");
         await _bookCollection.InsertOneAsync(book);
         return book.Id;
     }

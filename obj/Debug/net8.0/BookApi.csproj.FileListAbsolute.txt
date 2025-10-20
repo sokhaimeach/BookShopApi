@@ -36,3 +36,4 @@ D:\SV23_YEAR2\DISCIPLINE\Book_Ecommerce\BookApi\obj\Debug\net8.0\refint\BookApi.
 D:\SV23_YEAR2\DISCIPLINE\Book_Ecommerce\BookApi\obj\Debug\net8.0\BookApi.pdb
 D:\SV23_YEAR2\DISCIPLINE\Book_Ecommerce\BookApi\obj\Debug\net8.0\BookApi.genruntimeconfig.cache
 D:\SV23_YEAR2\DISCIPLINE\Book_Ecommerce\BookApi\obj\Debug\net8.0\ref\BookApi.dll
+D:\SV23_YEAR2\DISCIPLINE\Book_Ecommerce\BookApi\obj\Debug\net8.0\BookApi.sourcelink.json
