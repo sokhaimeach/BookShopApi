@@ -21,8 +21,57 @@ public class BookService
         _bookCollection = database.GetCollection<Book>(databaseSettings.Value.BooksCollection);
     }
     // get all books
-    public async Task<List<Book>> GetAllAsync() =>
-        await _bookCollection.Find(_ => true).ToListAsync();
+    public async Task<List<BookWithAuthorName>> GetAllAsync()
+    {
+        BsonDocument lookupAuthor = new BsonDocument
+        {
+            {"$lookup", new BsonDocument
+                {
+                    {"from", "Authors"},
+                    {"localField", "author_id"},
+                    {"foreignField", "_id" },
+                    {"as", "author_info"}
+                }
+            }
+        };
+        BsonDocument unwindAuthor = new BsonDocument
+        {
+            {"$unwind", new BsonDocument
+                {
+                    {"path", "$author_info"},
+                    {"preserveNullAndEmptyArrays", true}
+                }
+            }
+        };
+        BsonDocument addField = new BsonDocument
+        {
+            {"$addFields", new BsonDocument
+                {
+                    {"author_name", "$author_info.name"}
+                }
+            }
+        };
+        BsonDocument selectFields = new BsonDocument
+        {
+            {"$project", new BsonDocument
+                {
+                    {"title",1 },
+                    {"price",1 },
+                    {"category",1 },
+                    {"author_id",1 },
+                    {"image_url",1 },
+                    {"description",1 },
+                    {"publish_date",1 },
+                    {"favorite",1 },
+                    {"reviews",1 },
+                    {"author_name",1 }
+                }
+            }
+        };
+        var pipeline = new[] { lookupAuthor, unwindAuthor, addField, selectFields };
+        var result = await _bookCollection.Aggregate<BookWithAuthorName>(pipeline).ToListAsync();
+        return result;
+    }
     // add new book
     public async Task<string> AddAsync([FromBody] Book book)
     {

@@ -30,6 +30,12 @@ public class Book
     public List<Review> Reviews { get; set; } = new List<Review>();
 }
 
+public class BookWithAuthorName:Book
+{
+    [BsonElement("author_name")]
+    public string AuthorName { get; set; } = String.Empty;
+}
+
 public class Review
 {
     [BsonElement("user_id")]
