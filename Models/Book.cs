@@ -24,7 +24,7 @@ public class Book
     [BsonElement("publish_date")]
     public DateTime PublishDate { get; set; }
     [BsonElement("favorite")]
-    [BsonRepresentation(BsonType.ObjectId)]
+    // [BsonRepresentation(BsonType.ObjectId)]
     public List<string> Favorite { get; set; } = new List<string>();
     [BsonElement("reviews")]
     public List<Review> Reviews { get; set; } = new List<Review>();
@@ -39,7 +39,7 @@ public class BookWithAuthorName:Book
 public class Review
 {
     [BsonElement("user_id")]
-    [BsonRepresentation(BsonType.ObjectId)]
+    // [BsonRepresentation(BsonType.ObjectId)]
     public string UserId { get; set; } = String.Empty;
     [BsonElement("comment")]
     public string? Comment { get; set; }
@@ -65,7 +65,7 @@ public class BookDetail
     [BsonElement("publish_date")]
     public DateTime PublishDate { get; set; }
     [BsonElement("favorite")]
-    [BsonRepresentation(BsonType.ObjectId)]
+    // [BsonRepresentation(BsonType.ObjectId)]
     public List<string> Favorite { get; set; } = new List<string>();
     [BsonElement("author_info")]
     public Author AuthorInfo { get; set; } = new Author();

@@ -24,7 +24,7 @@ public class BookController:ControllerBase
     public async Task<IActionResult> AddBook([FromBody] Book book)
     {
         var result = await _bookService.AddAsync(book);
-        return Ok(result);
+        return new JsonResult(result.ToString());
     }
     // delete book
     [HttpDelete("DeleteBook/{id}")]
