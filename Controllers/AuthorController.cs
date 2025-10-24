@@ -24,7 +24,7 @@ public class AuthorController:ControllerBase
     public async Task<IActionResult> AddAuthor([FromBody] Author author)
     {
         var authorId = await _authorService.AddAsync(author);
-        return Ok(authorId);
+        return new JsonResult(authorId.ToString());
     }
     // delete author
     [HttpDelete("DeleteAuthor/{id}")]

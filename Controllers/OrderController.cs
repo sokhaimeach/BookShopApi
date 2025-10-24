@@ -25,6 +25,6 @@ public class OrderController: ControllerBase
     public async Task<IActionResult> AddNewOrder([FromBody] Order order)
     {
         var orderId = await _service.AddAsync(order);
-        return Ok(orderId);
+        return new JsonResult(orderId.ToString());
     }
 }

@@ -25,7 +25,7 @@ public class UserController:ControllerBase
     public async Task<IActionResult> AddUser([FromBody] User user)
     {
         var userId = await _userService.AddAsync(user);
-        return Ok(userId);
+        return new JsonResult(userId.ToString());
     }
     // delete user
     [HttpDelete("DeleteUser/{id}")]
