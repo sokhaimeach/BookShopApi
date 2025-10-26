@@ -216,4 +216,18 @@ public class BookService
         var result = await _bookCollection.Aggregate<BookDetail>(pipeline).FirstOrDefaultAsync();
         return result;
     }
+    // get books by author id
+    public async Task<List<Book>> GetBooksByAuthorId(string id)
+    {
+        var filter = Builders<Book>.Filter.Eq(a => a.AuthorId, id);
+        var result = await _bookCollection.Find(filter).ToListAsync();
+        return result;
+    }
+    // get books by category
+    public async Task<List<Book>> GetBooksByCategory(string category)
+    {
+        var filter = Builders<Book>.Filter.Eq(a => a.Category, category);
+        var books = await _bookCollection.Find(filter).ToListAsync();
+        return books;
+    }
 }

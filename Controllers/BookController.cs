@@ -47,4 +47,18 @@ public class BookController:ControllerBase
         var book = await _bookService.GetOneAsync(id);
         return Ok(book);
     }
+    // get books by author id
+    [HttpGet("GetBooksByAuthorId/{id}")]
+    public async Task<IActionResult> GetBooksByAuthor(string id)
+    {
+        var books = await _bookService.GetBooksByAuthorId(id);
+        return Ok(books);
+    }
+    // get books by category
+    [HttpGet("GetBooksByCategory/{cate}")]
+    public async Task<IActionResult> GetBooksByCategories(string cate)
+    {
+        var books = await _bookService.GetBooksByCategory(cate);
+        return Ok(books);
+    }
 }
