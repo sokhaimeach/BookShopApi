@@ -188,6 +188,34 @@ public class BookService
                 }
             }
         };
+        BsonDocument addConvertedUserId = new BsonDocument {
+            { "$addFields", new BsonDocument {
+                { "reviews", new BsonDocument {
+                    { "$map", new BsonDocument {
+                        { "input", "$reviews" },
+                        { "as", "r" },
+                        { "in", new BsonDocument {
+                            // only convert if user_id looks like a valid ObjectId
+                            { "user_id", new BsonDocument {
+                                { "$cond", new BsonArray {
+                                    // condition: user_id matches 24 hex chars
+                                    new BsonDocument("$regexMatch", new BsonDocument {
+                                        { "input", "$$r.user_id" },
+                                        { "regex", "^[0-9a-fA-F]{24}$" }
+                                    }),
+                                    new BsonDocument("$toObjectId", "$$r.user_id"),
+                                    "$$r.user_id" // keep original (empty or invalid)
+                                }}
+                            }},
+                            { "comment", "$$r.comment" },
+                            { "rate", "$$r.rate" }
+                        }}
+                    }}
+                }}
+            }}
+        };
+
+
         BsonDocument filterFields = new BsonDocument
         {
             { "$project", new BsonDocument
@@ -212,7 +240,7 @@ public class BookService
                 }
             }
         };
-        var pipeline = new[] { filter, lookupAuthor, lookupReviews, merge, unwindAuthor, filterFields };
+        var pipeline = new[] { filter, lookupAuthor, unwindAuthor, addConvertedUserId, lookupReviews, merge, filterFields };
         var result = await _bookCollection.Aggregate<BookDetail>(pipeline).FirstOrDefaultAsync();
         return result;
     }
@@ -227,6 +255,20 @@ public class BookService
     public async Task<List<Book>> GetBooksByCategory(string category)
     {
         var filter = Builders<Book>.Filter.Eq(a => a.Category, category);
+        var books = await _bookCollection.Find(filter).ToListAsync();
+        return books;
+    }
+    // find user's wishlist books
+    public async Task<List<Book>> GetBookByWishList(string UserId)
+    {
+        BsonDocument filter = new BsonDocument
+        {
+            {"favorite", new BsonDocument
+                {
+                    {"$in", new BsonArray{UserId}}
+                }
+            }
+        };
         var books = await _bookCollection.Find(filter).ToListAsync();
         return books;
     }

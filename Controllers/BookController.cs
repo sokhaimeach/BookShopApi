@@ -61,4 +61,11 @@ public class BookController:ControllerBase
         var books = await _bookService.GetBooksByCategory(cate);
         return Ok(books);
     }
+    // get books boy user's wish list
+    [HttpGet("GetByUserFav/{UserId}")]
+    public async Task<IActionResult> GetBooksByUserFav(string UserId)
+    {
+        var books = await _bookService.GetBookByWishList(UserId);
+        return Ok(books);
+    }
 }
