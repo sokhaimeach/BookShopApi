@@ -10,8 +10,9 @@ namespace BookApi.Services;
 public class BookService
 {
     private readonly IMongoCollection<Book> _bookCollection;
+    private readonly OrderService _orderService;
     // construtor
-    public BookService(IOptions<DatabaseSettings> databaseSettings)
+    public BookService(IOptions<DatabaseSettings> databaseSettings, OrderService orderService)
     {
         // initialize MongoDb client
         var mongoClient = new MongoClient(databaseSettings.Value.ConnectionString);
@@ -19,6 +20,8 @@ public class BookService
         var database = mongoClient.GetDatabase(databaseSettings.Value.DatabaseName);
         // connect to collection
         _bookCollection = database.GetCollection<Book>(databaseSettings.Value.BooksCollection);
+        // order
+        _orderService = orderService;
     }
     // get all books
     public async Task<List<BookWithAuthorName>> GetAllAsync()
@@ -269,6 +272,48 @@ public class BookService
                 }
             }
         };
+        var books = await _bookCollection.Find(filter).ToListAsync();
+        return books;
+    }
+    // best seller
+    public async Task<List<Book>> GetBestSellBooks()
+    {
+        var orders = await _orderService.GetAllAsync();
+
+        var quantityByBook = new Dictionary<string, int>();
+
+        foreach (var order in orders)
+        {
+            foreach (var info in order.OrderListInfo)
+            {
+                if (quantityByBook.ContainsKey(info.Id))
+                    quantityByBook[info.Id] += info.Quantity;
+                else
+                    quantityByBook[info.Id] = info.Quantity;
+            }
+        }
+
+        // Sort by quantity descending
+        var sortedBookIds = quantityByBook
+            .OrderByDescending(x => x.Value)
+            .Select(x => x.Key)
+            .ToList();
+
+        // Find all books in MongoDB
+        var filter = Builders<Book>.Filter.In(b => b.Id, sortedBookIds);
+        var books = await _bookCollection.Find(filter).Limit(8).ToListAsync();
+
+        // Optional: order the books according to their best-sell ranking
+        books = books.OrderBy(b => sortedBookIds.IndexOf(b.Id)).ToList();
+
+        return books;
+    }
+    // filter related product
+    public async Task<List<Book>> GetRelatedProduct(string id, string category){
+        // prevent the same product
+        var prevent = Builders<Book>.Filter.Ne(a => a.Id, id);
+        var sameCate = Builders<Book>.Filter.Eq(a => a.Category, category);
+        var filter = Builders<Book>.Filter.And(prevent, sameCate);
         var books = await _bookCollection.Find(filter).ToListAsync();
         return books;
     }

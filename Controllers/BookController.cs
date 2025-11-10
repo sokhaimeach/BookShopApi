@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace BookApi.Controllers;
 [ApiController]
 [Route("api/[controller]")]
-public class BookController:ControllerBase
+public class BookController : ControllerBase
 {
     private readonly BookService _bookService;
     public BookController(BookService bookService)
@@ -66,6 +66,20 @@ public class BookController:ControllerBase
     public async Task<IActionResult> GetBooksByUserFav(string UserId)
     {
         var books = await _bookService.GetBookByWishList(UserId);
+        return Ok(books);
+    }
+    // get best seller
+    [HttpGet("GetBestSeller")]
+    public async Task<IActionResult> GetBest()
+    {
+        var books = await _bookService.GetBestSellBooks();
+        return Ok(books);
+    }
+    // get related books
+    [HttpGet("GetRelated/{id}/{cate}")]
+    public async Task<IActionResult> GetRelatedBooks(string id, string cate)
+    {
+        var books = await _bookService.GetRelatedProduct(id, cate);
         return Ok(books);
     }
 }
